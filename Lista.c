@@ -1,4 +1,4 @@
-#include "lista.h"
+#include "Lista.h"
 #include <stdlib.h>
 
 typedef struct nodo{
@@ -11,6 +11,14 @@ typedef struct lista{
     struct nodo* ultimo;
     size_t largo;
 }lista_t;
+
+
+typedef struct lista_iter {
+	struct nodo* actual;
+	struct nodo* anterior;
+    lista_t* lista;
+} lista_iter_t;
+
 
 nodo_t* crear_nodo(void* dato){
 
@@ -143,4 +151,84 @@ void lista_destruir(lista_t *lista, void (*destruir_dato)(void *)){
         }
     }
     free(lista);
+}
+
+
+/* *****************************************************************
+ *                    PRIMITIVAS DEL ITERADOR INTERNO
+ * *****************************************************************/
+
+
+ void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra){
+     nodo_t *actual = lista->primero;
+     bool seguir = true;
+     for(int i = 0; i < lista->largo; i++){
+        if(seguir){
+            seguir = visitar(actual->dato, extra);
+        }
+        actual = actual -> siguiente;
+    }
+ }
+
+
+ /* *****************************************************************
+ *                    PRIMITIVAS DEL ITERADOR EXTERNO
+ * *****************************************************************/
+
+
+lista_iter_t *lista_iter_crear(lista_t *lista){
+    lista_iter_t *lista_iter = malloc(sizeof(lista_iter_t));
+    if(!lista_iter)return NULL;       // Si malloc no me concede memoria, salgo
+    lista_iter->lista = lista;
+    lista_iter->actual = lista->primero;
+    lista_iter->anterior = NULL;
+    return lista_iter;
+}
+
+
+bool lista_iter_avanzar(lista_iter_t *iter){
+    if(!iter->actual) return false;      // Si el actual es NULL (ultimo) devuelvo false
+    iter->anterior = iter->actual;
+    iter->actual = iter->actual->siguiente;
+    return true;
+}
+
+
+void *lista_iter_ver_actual(const lista_iter_t *iter){
+    if(!iter->actual) return NULL;       //Si estoy en el ultimo, devuelvo NULL
+    return iter->actual->dato;
+}
+
+
+bool lista_iter_al_final(const lista_iter_t *iter){
+    return (!(iter->actual));
+}
+
+
+void lista_iter_destruir(lista_iter_t *iter){
+    free(iter);
+}
+
+
+bool lista_iter_insertar(lista_iter_t *iter, void *dato){
+    nodo_t *nodo = crear_nodo(dato);
+    if(!(nodo))return false;
+
+    if(!iter->anterior)iter->anterior->siguiente = nodo;
+
+    nodo->siguiente = iter->actual;
+    iter->anterior = nodo;
+    return true;
+}
+
+
+void *lista_iter_borrar(lista_iter_t *iter){
+    nodo_t *aux_nodo = iter->actual->siguiente;
+    void * aux_dato = iter->actual->dato;
+
+    destruir_nodo(iter->actual);
+
+    if(!iter->anterior)iter->anterior->siguiente = aux_nodo;
+    iter->actual = aux_nodo;
+    return aux_dato;
 }

@@ -69,18 +69,50 @@ size_t lista_largo(const lista_t *lista);
 /* *****************************************************************
  *                    PRIMITIVAS DEL ITERADOR INTERNO
  * *****************************************************************/
- void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra);
+
+
+// Recorre toda la lista aplicando la funcion visitar, si esta no retorna false, a cada
+// elemento. Puede utilizar un dato extra.
+// Pre: la lista fue creada, y visitar devuelve un booleano.
+// Post: la funcion se aplicara a todos los elementos mientras no devuelva false.
+void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra);
 
  /* *****************************************************************
  *                    PRIMITIVAS DEL ITERADOR EXTERNO
  * *****************************************************************/
 
+// Crea el iterador, que apuntara al primer elemento de la lista, si falla devuelve NULL.
+// Pre: la lista fue creada.
+// Post: se creo el iterador.
 lista_iter_t *lista_iter_crear(lista_t *lista);
+
+// El iterador apuntara al siguiente elemento y devuelve false. Si estuviese 
+// al final, devuelve false.
+// Pre: el iterador fue creado.
 bool lista_iter_avanzar(lista_iter_t *iter);
+
+// Devuelve el valor del elemento actual, si estuviese al final, devuelve false.
+// Pre: el iterador fue creado.
 void *lista_iter_ver_actual(const lista_iter_t *iter);
+
+// Si el iterador apunta al final, devuelve true, caso contrario, devuelve false.
+// Pre: el iterador fue creado.
 bool lista_iter_al_final(const lista_iter_t *iter);
+
+// Destruye el iterador.
+// Pre: el iterador fue creado.
 void lista_iter_destruir(lista_iter_t *iter);
+
+// Inserta el nuevo elemento a la lista, detras del elemento actual.
+// Pre: el iterador fue creado.
+// Post: se añadio un nuevo elemento a la lista y el iterador apuntara a este mismo.
+// Se modifico la lista
 bool lista_iter_insertar(lista_iter_t *iter, void *dato);
+
+// Elimina el elemento actual de la lista, y el iterador apuntara al siguiente.
+// Pre: el iterador fue creado.
+// Post: se elimino el elemento de la lista y el iterador apuntara al siguiente.
+// Se modifico la lista
 void *lista_iter_borrar(lista_iter_t *iter);
 
 /* *****************************************************************
