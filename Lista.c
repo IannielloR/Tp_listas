@@ -44,7 +44,7 @@ void destruir_nodo(nodo_t* nodo){
  *                    PRIMITIVAS DE LA LISTA
  * *****************************************************************/
 
-lista_t *lista_crear(void){
+lista_t* lista_crear(void){
     lista_t* lista = malloc(sizeof(lista_t));
 
     if (lista == NULL) {
@@ -65,7 +65,7 @@ bool lista_esta_vacia(const lista_t *lista){
 }
 
 bool lista_insertar_primero(lista_t *lista, void *dato){
-    nodo_t* nodo = crear_nodo(valor);
+    nodo_t* nodo = crear_nodo(dato);
 
     if (!nodo){
         return false;
@@ -83,7 +83,7 @@ bool lista_insertar_primero(lista_t *lista, void *dato){
 }
 
 bool lista_insertar_ultimo(lista_t *lista, void *dato){
-    nodo_t* nodo = crear_nodo(valor);
+    nodo_t* nodo = crear_nodo(dato);
 
     if (!nodo){
         return false;
@@ -103,7 +103,7 @@ bool lista_insertar_ultimo(lista_t *lista, void *dato){
 }
 
 void *lista_borrar_primero(lista_t *lista){
-    if(lista_esta_vacia){
+    if(lista_esta_vacia(lista)){
         return NULL;
     }
 
@@ -115,15 +115,15 @@ void *lista_borrar_primero(lista_t *lista){
         lista->ultimo = NULL;
     }
 
-    destruir_nodo(nodo);
+    destruir_nodo(nodo_aux);
     lista->largo --;
 
-    return dato;
+    return dato_aux;
 
 }
 
 void *lista_ver_primero(const lista_t *lista){
-    if(!lista_esta_vacia){
+    if(!lista_esta_vacia(lista)){
         return NULL;
     }
 
@@ -131,7 +131,7 @@ void *lista_ver_primero(const lista_t *lista){
 }
 
 void *lista_ver_ultimo(const lista_t* lista){
-    if(!lista_esta_vacia){
+    if(!lista_esta_vacia(lista)){
         return NULL;
     }
 
