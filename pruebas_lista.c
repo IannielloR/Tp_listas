@@ -1,235 +1,215 @@
 #include "Lista.h"
+#include "testing.h"
+#include <stdio.h>
 #include <stdlib.h>
 
-typedef struct nodo{
-    void* dato;
-    struct nodo* siguiente;
-}nodo_t;
+#define NUM_PRUEBA_VOLUMEN 10000
+#define NUM_PRUEBAS 6
 
-typedef struct lista{
-    struct nodo* primero;
-    struct nodo* ultimo;
-    size_t largo;
-}lista_t;
+/*
+Prueba de algunos elementos
+*/
+void pruebas_algunos_elementos(){
+    printf("\nINICIO DE PRUEBAS DE ALGUNOS ELEMENTOS\n");
 
+    /*Creo una cola*/
+    lista_t* lista = lista_crear();
 
-typedef struct lista_iter {
-	struct nodo* actual;
-	struct nodo* anterior;
-    lista_t* lista;
-} lista_iter_t;
+    /*Elementos y el tamaño*/
+    int elementos[] = {20, 30, 10, 40, 50, 60};
 
+    /*Pruebo si la cola se comporta correctamente en las condiciones bordes*/
+    print_test("Crea lista", lista != NULL);
 
-nodo_t* crear_nodo(void* dato){
+    print_test("La lista esta vacia", lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", !lista_ver_primero(lista));
+    print_test("El ultimo de la lista es correcto", !lista_ver_ultimo(lista));
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 0);
+    print_test("Borrar primero es false", !lista_borrar_primero(lista));
+    
+    /*Pruebo insertar los elementos al principio*/
+    for(size_t i=0; i < NUM_PRUEBAS; i++){
 
-    nodo_t* nodo = malloc(sizeof(nodo_t));
-
-     if (nodo == NULL) {
-         return NULL;
+        printf("nro: %d\n", elementos[i]);
+        print_test("Insertamos el elemento", lista_insertar_primero(lista, &elementos[i]));
+        print_test("El primer numero es correcto", lista_ver_primero(lista) == &elementos[i]); 
     }
 
-    nodo->dato = dato;
-    nodo->siguiente = NULL;
+    print_test("La lista no esta vacia", !lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", lista_ver_primero(lista) == &elementos[5]);
+    print_test("El ultimo de la lista es correcto", lista_ver_ultimo(lista) == &elementos[0]);
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 6);
+    print_test("Borrar primero es correcto", lista_borrar_primero(lista) == &elementos[5]);
+    print_test("El primero de la lista es correcto", lista_ver_primero(lista) == &elementos[4]);
+    print_test("El ultimo de la lista es correcto", lista_ver_ultimo(lista) == &elementos[0]);
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 5);
 
-    return nodo;
+
+    /*Pruebo insertar los elementos al final*/
+    for(size_t i=0; i < NUM_PRUEBAS; i++){
+
+        printf("nro: %d\n", elementos[i]);
+        print_test("Insertamos el elemento", lista_insertar_ultimo(lista, &elementos[i]));
+        print_test("El ultimo numero es correcto", lista_ver_ultimo(lista) == &elementos[i]); 
+    }
+
+    print_test("La lista no esta vacia", !lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", lista_ver_primero(lista) == &elementos[4]);
+    print_test("El ultimo de la lista es correcto", lista_ver_ultimo(lista) == &elementos[5]);
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 11);
+    print_test("Borrar primero es correcto", lista_borrar_primero(lista) == &elementos[4]);
+    print_test("El primero de la lista es correcto", lista_ver_primero(lista) == &elementos[3]);
+    print_test("El ultimo de la lista es correcto", lista_ver_ultimo(lista) == &elementos[5]);
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 10);
+
+    /*Probamos destruir la lista*/
+    lista_destruir(lista, NULL);
+    print_test("Lista destruida", true);
+
 }
 
-void destruir_nodo(nodo_t* nodo){
-    free(nodo);
+/*
+Pueba de elemnto NULL
+*/
+void pruebas_null(){
+    printf("\nINICIO DE PRUEBAS DE NULL\n");
+
+    /*Creo una cola*/
+    lista_t* lista = lista_crear();
+
+    /*Pruebo si la cola se comporta correctamente en las condiciones bordes*/
+    print_test("Lista creada", lista != NULL);
+    print_test("La lista esta vacia", lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", !lista_ver_primero(lista));
+    print_test("El ultimo de la lista es correcto", !lista_ver_ultimo(lista));
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 0);
+    print_test("Borrar primero es false", !lista_borrar_primero(lista));
+    
+    /*Pruebo si encola correctamente*/
+    print_test("Insertar NULL es true", lista_insertar_primero(lista, NULL));
+
+    /*Pruebo la cola ahora que esta encolada*/
+    print_test("La lista esta vacia", !lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", lista_ver_primero(lista) == NULL);
+    print_test("El ultimo de la lista es correcto", lista_ver_ultimo(lista) == NULL);
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 1);
+    print_test("Borrar primero es false", !lista_borrar_primero(lista));
+
+    /*Probamos destruir la cola*/
+    lista_destruir(lista, NULL);
+    print_test("Lista destruida", true);
+
 }
 
-/* *****************************************************************
- *                    PRIMITIVAS DE LA LISTA
- * *****************************************************************/
+/*
+Prueba de volumen
+ */
+ void pruebas_volumen(){
+    printf("\nINICIO DE PRUEBAS DE VOLUMEN\n");
 
-lista_t* lista_crear(void){
-    lista_t* lista = malloc(sizeof(lista_t));
+    /*Creo una cola*/
+    lista_t* lista = lista_crear();
 
-    if (lista == NULL) {
+    /*Pruebo si la cola se comporta correctamente en las condiciones bordes*/
+    print_test("Lista creada", lista != NULL);
+    print_test("La lista esta vacia", lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", !lista_ver_primero(lista));
+    print_test("El ultimo de la lista es correcto", !lista_ver_ultimo(lista));
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 0);
+    print_test("Borrar primero es false", !lista_borrar_primero(lista));
 
-        return NULL;
+    /*Pruebo si encola correctamente*/
+    size_t i;
+
+    for(i = 0; i < NUM_PRUEBA_VOLUMEN; i++){
         
+        print_test("Insertamos el elemento", lista_insertar_primero(lista, &i));
+        print_test("El primer numero es correcto", lista_ver_primero(lista) == &i); 
     }
 
-    lista->primero = NULL;
-    lista->ultimo = NULL;
-    lista->largo = 0;
+    /*Pruebo la cola ahora que esta encolada*/
+    print_test("La lista no esta vacia", !lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", lista_ver_primero(lista) == &i);
+    print_test("El ultimo de la lista es correcto", lista_ver_ultimo(lista) == 0);
+    print_test("El largo de la lista es correcto", lista_largo(lista) == NUM_PRUEBA_VOLUMEN);
 
-    return lista;
-}
-
-bool lista_esta_vacia(const lista_t *lista){
-    return !lista->primero || !lista->ultimo || lista->largo == 0;
-}
-
-bool lista_insertar_primero(lista_t *lista, void *dato){
-    nodo_t* nodo = crear_nodo(dato);
-
-    if (!nodo){
-        return false;
-        }
-
-    if(!lista_esta_vacia(lista)){
-        nodo->siguiente = lista->primero;
-    }else{
-        lista->ultimo = nodo;
-    }
-
-    lista->primero = nodo;
-    lista->largo ++;
-    return true;
-}
-
-bool lista_insertar_ultimo(lista_t *lista, void *dato){
-    nodo_t* nodo = crear_nodo(dato);
-
-    if (!nodo){
-        return false;
-        }
-
-    if(lista_esta_vacia(lista)){
-        lista->primero = nodo;
-
-    }else{
-        lista->ultimo->siguiente = nodo;
-    }
-
-    lista->ultimo = nodo;
-    lista->largo ++;
-
-    return true;
-}
-
-void *lista_borrar_primero(lista_t *lista){
-
-    if(lista_esta_vacia(lista)){
-        return NULL;
-    }
-
-    nodo_t* nodo_aux =  lista->primero;
-    void* dato_aux = lista->primero->dato;
-    lista->primero = lista->primero->siguiente;
-
-    if(!lista->primero){
-        lista->ultimo = NULL;
-    }
-
-    free(nodo_aux);
-    lista->largo --;
-
-    return dato_aux;
-
-}
-
-void *lista_ver_primero(const lista_t *lista){
-
-    if(lista_esta_vacia(lista)){
-        return NULL;
-    }
-
-    return lista->primero->dato;
-}
-
-void *lista_ver_ultimo(const lista_t* lista){
-
-    if(lista_esta_vacia(lista)){
-        return NULL;
-    }
-
-    return lista->ultimo->dato;
-}
-
-size_t lista_largo(const lista_t *lista){
-    return lista->largo;
-}
-
-void lista_destruir(lista_t *lista, void (*destruir_dato)(void *)){
+    /*Desencolamos*/
 
     while(!lista_esta_vacia(lista)){
-        void* dato = lista_borrar_primero(lista);
-        if(destruir_dato){
-            (*destruir_dato)(dato);
+
+        print_test("Desencolo y es true", lista_borrar_primero(lista) == &i);
+
+        i--;
+
+        if(!lista_esta_vacia(lista)){
+            print_test("El primero numero es true", lista_ver_primero(lista) == &i); 
         }
     }
-    free(lista);
-}
 
+    /*Pruebo la cola desencolada*/
+    print_test("La lista esta vacia", lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", !lista_ver_primero(lista));
+    print_test("El ultimo de la lista es correcto", !lista_ver_ultimo(lista));
+    print_test("Borrar primero es false", !lista_borrar_primero(lista));
 
-/* *****************************************************************
- *                    PRIMITIVAS DEL ITERADOR INTERNO
- * *****************************************************************/
+    /*Probamos destruir la cola*/
+    lista_destruir(lista, NULL);
+    print_test("Lista destruida", true);
 
-
- void lista_iterar(lista_t *lista, bool visitar(void *dato, void *extra), void *extra){
-     nodo_t *actual = lista->primero;
-     bool seguir = true;
-     for(int i = 0; i < lista->largo; i++){
-        if(seguir){
-            seguir = visitar(actual->dato, extra);
-        }
-        actual = actual -> siguiente;
-    }
  }
 
-
- /* *****************************************************************
- *                    PRIMITIVAS DEL ITERADOR EXTERNO
- * *****************************************************************/
-
-
-lista_iter_t *lista_iter_crear(lista_t *lista){
-    lista_iter_t *lista_iter = malloc(sizeof(lista_iter_t));
-    if(!lista_iter)return NULL;       // Si malloc no me concede memoria, salgo
-    lista_iter->lista = lista;
-    lista_iter->actual = lista->primero;
-    lista_iter->anterior = NULL;
-    return lista_iter;
+void destruir_aux(void* dato){
+    lista_destruir(dato, NULL);
 }
 
+/*
+Prueba de destruccion de colas encoladas
+ */
 
-bool lista_iter_avanzar(lista_iter_t *iter){
-    if(!iter->actual) return false;      // Si el actual es NULL (ultimo) devuelvo false
-    iter->anterior = iter->actual;
-    iter->actual = iter->actual->siguiente;
-    return true;
+void prueba_destruir(){
+
+    /*Creo una cola*/
+    lista_t* lista = lista_crear();
+
+
+    /*Pruebo si la cola se comporta correctamente en las condiciones bordes*/
+    print_test("Lista creada", lista != NULL);
+    print_test("La lista esta vacia", lista_esta_vacia(lista));
+    print_test("El primero de la lista es correcto", !lista_ver_primero(lista));
+    print_test("El ultimo de la lista es correcto", !lista_ver_ultimo(lista));
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 0);
+    print_test("Borrar primero es false", !lista_borrar_primero(lista));
+    
+
+    /*Pruebo encolar los elementos*/
+    print_test("Insertamos el elemento", lista_insertar_primero(lista, lista_crear()));
+    print_test("Insertamos el elemento", lista_insertar_ultimo(lista, lista_crear()));
+
+    /*Pruebo la cola ahora que esta encolada*/
+    print_test("La lista no esta vacia", !lista_esta_vacia(lista));
+    print_test("El largo de la lista es correcto", lista_largo(lista) == 2);
+
+    /*Probamos destruir la cola*/
+    lista_destruir(lista, destruir_aux);
+    print_test("Lista destruida", true);
 }
 
-
-void *lista_iter_ver_actual(const lista_iter_t *iter){
-    if(!iter->actual) return NULL;       //Si estoy en el ultimo, devuelvo NULL
-    return iter->actual->dato;
+void pruebas_lista_estudiante() {
+    pruebas_algunos_elementos();
+    pruebas_null();
+    pruebas_volumen();
+    prueba_destruir();
 }
 
+/*
+ * Función main() que llama a la función de pruebas.
+ */
 
-bool lista_iter_al_final(const lista_iter_t *iter){
-    return (!(iter->actual));
+#ifndef CORRECTOR  // Para que no dé conflicto con el main() del corrector.
+
+int main(void) {
+    pruebas_lista_estudiante();
+    return failure_count() > 0;  // Indica si falló alguna prueba.
 }
 
-
-void lista_iter_destruir(lista_iter_t *iter){
-    free(iter);
-}
-
-
-bool lista_iter_insertar(lista_iter_t *iter, void *dato){
-    nodo_t *nodo = crear_nodo(dato);
-    if(!(nodo))return false;
-
-    if(!iter->anterior)iter->anterior->siguiente = nodo;
-
-    nodo->siguiente = iter->actual;
-    iter->anterior = nodo;
-    return true;
-}
-
-
-void *lista_iter_borrar(lista_iter_t *iter){
-    nodo_t *aux_nodo = iter->actual->siguiente;
-    void * aux_dato = iter->actual->dato;
-
-    destruir_nodo(iter->actual);
-
-    if(!iter->anterior)iter->anterior->siguiente = aux_nodo;
-    iter->actual = aux_nodo;
-    return aux_dato;
-}
+#endif
