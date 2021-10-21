@@ -101,6 +101,7 @@ bool lista_insertar_ultimo(lista_t *lista, void *dato){
 }
 
 void *lista_borrar_primero(lista_t *lista){
+
     if(lista_esta_vacia(lista)){
         return NULL;
     }
@@ -109,11 +110,11 @@ void *lista_borrar_primero(lista_t *lista){
     void* dato_aux = lista->primero->dato;
     lista->primero = lista->primero->siguiente;
 
-    if(!lista->primero->siguiente){
+    if(!lista->primero){
         lista->ultimo = NULL;
     }
 
-    destruir_nodo(nodo_aux);
+    free(nodo_aux);
     lista->largo --;
 
     return dato_aux;
@@ -130,7 +131,7 @@ void *lista_ver_primero(const lista_t *lista){
 }
 
 void *lista_ver_ultimo(const lista_t* lista){
-    
+
     if(lista_esta_vacia(lista)){
         return NULL;
     }
@@ -232,3 +233,4 @@ void *lista_iter_borrar(lista_iter_t *iter){
     iter->actual = aux_nodo;
     return aux_dato;
 }
+
