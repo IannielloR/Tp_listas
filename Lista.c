@@ -25,9 +25,7 @@ nodo_t* crear_nodo(void* dato){
     nodo_t* nodo = malloc(sizeof(nodo_t));
 
      if (nodo == NULL) {
-
          return NULL;
-
     }
 
     nodo->dato = dato;
@@ -123,7 +121,8 @@ void *lista_borrar_primero(lista_t *lista){
 }
 
 void *lista_ver_primero(const lista_t *lista){
-    if(!lista_esta_vacia(lista)){
+
+    if(lista_esta_vacia(lista)){
         return NULL;
     }
 
@@ -131,7 +130,8 @@ void *lista_ver_primero(const lista_t *lista){
 }
 
 void *lista_ver_ultimo(const lista_t* lista){
-    if(!lista_esta_vacia(lista)){
+    
+    if(lista_esta_vacia(lista)){
         return NULL;
     }
 
