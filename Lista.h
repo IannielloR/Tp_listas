@@ -1,6 +1,7 @@
 #ifndef _LISTA_H
 #define _LISTA_H
 
+#include <stdlib.h>
 #include <stdbool.h>
 
 
@@ -121,3 +122,4 @@ void *lista_iter_borrar(lista_iter_t *iter);
 void pruebas_lista_estudiante(void);
 
 #endif  // _LISTA_H
+
