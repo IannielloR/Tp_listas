@@ -233,4 +233,3 @@ void *lista_iter_borrar(lista_iter_t *iter){
     iter->actual = aux_nodo;
     return aux_dato;
 }
-
